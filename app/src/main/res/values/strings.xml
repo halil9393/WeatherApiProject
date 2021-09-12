@@ -1,0 +1,37 @@
+
+<resources>
+    <string name="app_name">WeatherApiProject</string>
+
+    <!--    main activity icinde-->
+    <string name="gps_kullanim_izni_gerekli">"GPS Kullanım İzni Gerekli !"</string>
+    <string name="programi_kullanmaya_devam">"Programı kullanmaya devam etmek için Ayalar kısmından manuel olarak izin vermeniz gerekli"</string>
+    <string name="ayarlara_git">"Ayarlara Git"</string>
+    <string name="iptal">"İptal"</string>
+    <string name="lokasyon_bilignize_ihtiyac">"Programı kullanmaya devam etmek için lokasyon bilginize ihtiyacımız var."</string>
+    <string name="izin_ver">"İzin Ver"</string>
+    <string name="konum_bilgisi_bulundu">"Konum Bilgisi Bulundu" </string>
+    <string name="gps_kapatildi">"GPS Kapatıldı"</string>
+    <string name="gps_acildi">"GPS Açıldı"</string>
+
+    <!--    activity second xml icinde-->
+    <string name="size_en_yakin">"Size En Yakin Lokasyonlar"</string>
+    <string name="baska_yer_ara">"Başka yer ara"</string>
+
+    <!--    activity main xml icinde-->
+    <string name="konum_bilgisi_aliniyor">Konum Bilgisi Alınıyor\nLütfen Bekleyiniz</string>
+    <string name="enlem">Enlem</string>
+    <string name="boylam">Boylam</string>
+
+    <!--    activity third xml icinde-->
+    <string name="hata_tekrar_deneyin">Hata ! Tekrar Deneyin</string>
+
+    <!--    item weathermodel xml icinde-->
+    <string name="ruzgar_hizi">Rüzgar Hızı:</string>
+    <string name="ruzgar_yonu">Rüzgar Yönü:</string>
+    <string name="basinc">Basınç:</string>
+    <string name="nem">Nem:</string>
+    <string name="gorunurluk">Görünürlük:</string>
+    <string name="ongorulebilirlik">Öngörülebilirlik:</string>
+
+
+</resources>

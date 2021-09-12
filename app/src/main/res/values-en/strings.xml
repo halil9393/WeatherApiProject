@@ -1,0 +1,38 @@
+
+<resources>
+    <string name="app_name">WeatherApiProject</string>
+
+    <!--    main activity icinde-->
+    <string name="gps_kullanim_izni_gerekli">"GPS Usage Permission Required !"</string>
+    <string name="programi_kullanmaya_devam">"To continue using the program, you need to give permission manually from the Settings section."</string>
+    <string name="ayarlara_git">"Go to Settings"</string>
+    <string name="iptal">"Cancel"</string>
+    <string name="lokasyon_bilignize_ihtiyac">"We need your location information to continue using the program."</string>
+    <string name="izin_ver">"Allow"</string>
+    <string name="konum_bilgisi_bulundu">"Location Information Found" </string>
+    <string name="gps_kapatildi">"GPS Disabled"</string>
+    <string name="gps_acildi">"GPS Enabled"</string>
+
+    <!--    activity second xml icinde-->
+    <string name="size_en_yakin">"Locations Nearest to You"</string>
+    <string name="baska_yer_ara">"Search elsewhere"</string>
+
+    <!--    activity main xml icinde-->
+    <string name="konum_bilgisi_aliniyor">Getting Location Information\nPlease Wait</string>
+    <string name="enlem">Latitude</string>
+    <string name="boylam">Longitude</string>
+
+
+
+    <!--    activity third xml icinde-->
+    <string name="hata_tekrar_deneyin">Error ! Please Try Again</string>
+
+    <!--    item weathermodel xml icinde-->
+    <string name="ruzgar_hizi">Wind Speed:</string>
+    <string name="ruzgar_yonu">Direction:</string>
+    <string name="basinc">Air Pressure:</string>
+    <string name="nem">Humidity:</string>
+    <string name="gorunurluk">Visibility:</string>
+    <string name="ongorulebilirlik">Predictability:</string>
+
+</resources>
