@@ -1,25 +1,23 @@
 package com.example.weatherapiproject.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.weatherapiproject.R
 import com.example.weatherapiproject.adapter.ConsolidateWeatherAdapter
 import com.example.weatherapiproject.databinding.ActivityThirdBinding
 import com.example.weatherapiproject.model.ConsolidatedWeather
 import com.example.weatherapiproject.utils.MyAnimations
 import com.example.weatherapiproject.utils.MyEventBusEvents
-import com.example.weatherapiproject.viewmodel.SecondViewModel
 import com.example.weatherapiproject.viewmodel.ThirdViewModel
+import kotlinx.coroutines.flow.collect
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -43,38 +41,18 @@ class ThirdActivity : AppCompatActivity() {
         setContentView(binding.root)
         Log.i("tag_flow", "ThirdActivity => onCreate")
 
-        // recycler setup
-        binding.recyclerViewWeather.layoutManager = LinearLayoutManager(this)
-        binding.recyclerViewWeather.adapter = consolidateWeatherAdapter
-        consolidateWeatherAdapter.mySetOnItemClickListener(object :
-            ConsolidateWeatherAdapter.MyOnItemClickListener {
-            override fun myOnItemClick(itemView: View?, position: Int) {
-
-                // tıklanılan view genişleyip detay gosterecek
-                val consolidatedWeather:ConsolidatedWeather = mDataList.get(position)
-                val show = toggleLayout(!consolidatedWeather.expanded,itemView!!,
-                    itemView.findViewById(R.id.sub_item) as LinearLayout
-                )
-                consolidatedWeather.expanded = show
-            }
-
-        })
-
+        setupRecyclerView()
 
 
         // listedeki view ler arasına renk katmak cizgi cekmek icin
         val decorator = DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
-        decorator.setDrawable(
-            ContextCompat.getDrawable(
-                applicationContext,
-                R.drawable.divider_line
-            )!!
-        )
+        val drawable = ContextCompat.getDrawable(applicationContext, R.drawable.divider_line)
+        decorator.setDrawable(drawable!!)
         binding.recyclerViewWeather.addItemDecoration(decorator)
 
 
         binding.ivBack2.setOnClickListener {
-            thirdViewModel.backPressEvent(this)
+            thirdViewModel.backPressEvent()
         }
 
 
@@ -82,7 +60,58 @@ class ThirdActivity : AppCompatActivity() {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    fun toggleLayout(isExpanded:Boolean,v:View, layoutExpand:LinearLayout):Boolean {
+    private fun setupRecyclerView() {
+
+        binding.recyclerViewWeather.layoutManager = LinearLayoutManager(this)
+        binding.recyclerViewWeather.adapter = consolidateWeatherAdapter
+        consolidateWeatherAdapter.mySetOnItemClickListener(object :
+            ConsolidateWeatherAdapter.MyOnItemClickListener {
+            override fun myOnItemClick(itemView: View?, position: Int) {
+
+                // tıklanılan view genişleyip detay gosterecek
+                val consolidatedWeather: ConsolidatedWeather = mDataList.get(position)
+                val show = toggleLayout(
+                    !consolidatedWeather.expanded, itemView!!,
+                    itemView.findViewById(R.id.sub_item) as LinearLayout
+                )
+                consolidatedWeather.expanded = show
+            }
+
+        })
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    override fun onBackPressed() {
+
+        thirdViewModel.backPressEvent()
+    }
+
+    private fun observeBackPressEvent() {
+
+        lifecycleScope.launchWhenStarted {
+
+            thirdViewModel.backPressState.collect {
+
+                if (it) goToSecondActivity()
+
+            }
+
+        }
+    }
+
+    private fun goToSecondActivity() {
+
+        val intent = Intent(this, SecondActivity::class.java)
+        this.startActivity(intent)
+        this.finish()
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    fun toggleLayout(isExpanded: Boolean, v: View, layoutExpand: LinearLayout): Boolean {
 //        MyAnimations.toggleArrow(v, isExpanded);  // takla attırılacak spinner iconu için kullanilacak
         if (isExpanded) {
             MyAnimations.expand(layoutExpand)
@@ -106,45 +135,80 @@ class ThirdActivity : AppCompatActivity() {
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
-        observeLiveData()
+//        observeLiveData()
+        observeWithFlow()
+        observeBackPressEvent()
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private fun observeLiveData() {
+//    private fun observeLiveData() {
+//
+//        thirdViewModel.dataSuccess.observe(this, Observer { data ->
+//            data?.let {
+//                binding.recyclerViewWeather.visibility = View.VISIBLE
+//                consolidateWeatherAdapter.updateDataList(data)
+//                mDataList = data
+//            }
+//        })
+//
+//        thirdViewModel.dataError.observe(this, Observer { error ->
+//            error?.let {
+//                if (it) {
+//                    binding.tvError.visibility = View.VISIBLE
+//                } else {
+//                    binding.tvError.visibility = View.GONE
+//                }
+//            }
+//        })
+//
+//        thirdViewModel.dataLoading.observe(this, Observer { loading ->
+//            loading?.let {
+//                if (it) {
+//                    binding.progressBar.visibility = View.VISIBLE
+//                    binding.recyclerViewWeather.visibility = View.GONE
+//                    binding.tvError.visibility = View.GONE
+//                } else {
+//                    binding.progressBar.visibility = View.GONE
+//                }
+//            }
+//        })
+//
+//    }
 
-        thirdViewModel.dataSuccess.observe(this, Observer { data ->
-            data?.let {
-                binding.recyclerViewWeather.visibility = View.VISIBLE
-                consolidateWeatherAdapter.updateDataList(data)
-                mDataList = data
-            }
-        })
+    private fun observeWithFlow() {
 
-        thirdViewModel.dataError.observe(this, Observer { error ->
-            error?.let {
-                if (it) {
-                    binding.tvError.visibility = View.VISIBLE
-                } else {
-                    binding.tvError.visibility = View.GONE
+        lifecycleScope.launchWhenStarted {
+
+            thirdViewModel.dataListState.collect {
+                when (it) {
+                    is ThirdViewModel.UiState.Success -> {     // Api Response Susccessfull
+                        binding.progressBar.visibility = View.GONE
+                        binding.recyclerViewWeather.visibility = View.VISIBLE
+                        mDataList = it.weather.consolidatedWeather
+                        consolidateWeatherAdapter.updateDataList(mDataList)
+                    }
+                    is ThirdViewModel.UiState.Loading -> {     // Api Response Waiting
+                        if (it.showLoading) {     // Loading True
+                            binding.progressBar.visibility = View.VISIBLE
+                            binding.recyclerViewWeather.visibility = View.GONE
+                            binding.tvError.visibility = View.GONE
+                        } else {      // Loading False
+                            binding.progressBar.visibility = View.GONE
+                        }
+
+                    }
+                    is ThirdViewModel.UiState.Fail -> {        // Api Response Fail
+                        binding.progressBar.visibility = View.GONE
+                        binding.tvError.visibility = View.VISIBLE
+                        it.exeption.printStackTrace()
+
+                    }
                 }
             }
-        })
 
-        thirdViewModel.dataLoading.observe(this, Observer { loading ->
-            loading?.let {
-                if (it) {
-                    binding.progressBar.visibility = View.VISIBLE
-                    binding.recyclerViewWeather.visibility = View.GONE
-                    binding.tvError.visibility = View.GONE
-                } else {
-                    binding.progressBar.visibility = View.GONE
-                }
-            }
-        })
-
+        }
     }
-
 
 
     //////////////////////////////        EVENT BUS       //////////////////////////////////////////

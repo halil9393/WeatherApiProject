@@ -2,41 +2,51 @@ package com.example.weatherapiproject.service
 
 import com.example.weatherapiproject.model.Parent
 import com.example.weatherapiproject.model.WeatherModel
-import io.reactivex.Single
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Url
 
 interface WeatherAPI {
 
-    companion object{
+    companion object {
 
         const val BASE_URL = "https://www.metaweather.com/api/"
 
     }
 
-//    @GET("location/44418")
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+//    // Normal retrofit cagrisinda call kullanıyoruz
 //    @GET
-//    suspend fun getWeatherOfLocation(@Url woeid:String): Call<WeatherModel>
-
-//    @GET  // bunu coroutine le beraber kullanırken yapıoruz
-//    suspend fun getWeatherOfLocation(@Url woeid:String): Response<WeatherModel>
-
+//    fun getWeatherOfLocation(@Url woeid:String): Call<WeatherModel>
+//
 //    @GET
 //    fun getLocationsMostClose(@Url latt_long:String): Call<List<Parent>>
-
+//
 //    @GET
 //    fun getLocationsIncludeText(@Url text:String): Call<List<Parent>>
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+//    // Live Data ile kullanılırken Single kullanılıyor
+//    @GET
+//    fun getWeatherOfLocation(@Url woeid:String): Single<WeatherModel>
+//
+//    @GET
+//    fun getLocationsMostClose(@Url latt_long:String): Single<List<Parent>>
+//
+//    @GET
+//    fun getLocationsIncludeText(@Url text:String): Single<List<Parent>>
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Coroutines ile kullanılırken suspend ekliyoruz ve Response donuyoruz
     @GET
-    fun getWeatherOfLocation(@Url woeid:String): Single<WeatherModel>
+    suspend fun getWeatherOfLocation(@Url woeid: String): Response<WeatherModel>
 
     @GET
-    fun getLocationsMostClose(@Url latt_long:String): Single<List<Parent>>
+    suspend fun getLocationsMostClose(@Url latt_long:String): Response<List<Parent>>
 
     @GET
-    fun getLocationsIncludeText(@Url text:String): Single<List<Parent>>
-
-
+    suspend fun getLocationsIncludeText(@Url text: String): Response<List<Parent>>
 }
